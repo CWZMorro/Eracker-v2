@@ -1,0 +1,17 @@
+# systemd user unit. Assumes the repository is cloned to ~/eracker; adjust the paths if not.
+[Unit]
+Description=Eracker (read-only Actual Budget dashboard)
+After=network-online.target
+
+[Service]
+WorkingDirectory=%h/eracker
+# same as `npm start`, without keeping an npm process around
+ExecStart=/usr/bin/env node --env-file=.env server/server.mjs
+# add Node's directory here if it is not on this PATH
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+# the listen address (e.g. a Tailscale IP) may not exist yet right after boot; keep retrying
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target
